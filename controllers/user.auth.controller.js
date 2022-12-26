@@ -47,7 +47,7 @@ module.exports = {
         httpOnly: true,
       });
     } else {
-      console.log("Signup failed");
+      console.log("Password incorrect");
     }
     res.json({ status: data });
   },

@@ -23,7 +23,7 @@ module.exports = {
       if (userData) {
         const match = await bcrypt.compare(data.password, userData.password);
         if (match) return userData;
-      }
+      } else console.log("User not found");
     } catch (err) {
       console.log(err);
     }
