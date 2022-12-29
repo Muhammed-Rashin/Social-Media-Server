@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const userModel = new mongoose.Schema(
   {
@@ -12,7 +12,7 @@ const userModel = new mongoose.Schema(
 );
 
 userModel.plugin(AutoIncrement, {
-  index: "order_seq",
-  inc_field: "index",
+  index: 'order_seq',
+  inc_field: 'index',
 });
-module.exports = mongoose.model("user", userModel);
+module.exports = mongoose.model('user', userModel);

@@ -1,11 +1,11 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const verifyAuth = require("./middlewares/verifyAuth");
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const verifyAuth = require('./middlewares/verifyAuth');
 
 // eslint-disable-next-line no-unused-vars
-const mongoose = require("./database-config/connect");
+const mongoose = require('./config/database.config');
 
 const corsConfig = {
   origin: true,
@@ -21,11 +21,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // routes
-const indexRoute = require("./routes/user");
-const authorizationRoute = require("./routes/authorization");
+const indexRoute = require('./routes/user');
+const authorizationRoute = require('./routes/authorization');
 
-app.use("/", indexRoute);
-app.use("/isAuthorized", verifyAuth, authorizationRoute);
+app.use('/', indexRoute);
+app.use('/isAuthorized', verifyAuth, authorizationRoute);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
