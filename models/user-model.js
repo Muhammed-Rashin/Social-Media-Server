@@ -7,6 +7,17 @@ const userModel = new mongoose.Schema(
     username: String,
     email: String,
     password: String,
+    bio: String,
+    profileImg: String,
+    firstName: String,
+    lastName: String,
+    followers: Array,
+    // followers: [
+    //   {
+    //     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+    //     date: Number,
+    //   },
+    // ],
   },
   { timestamps: true },
 );

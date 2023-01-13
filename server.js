@@ -13,6 +13,11 @@ const corsConfig = {
 };
 
 const app = express();
+app.use(
+  express.json({
+    limit: '100mb',
+  }),
+);
 
 // Middlewares
 app.use(cookieParser());

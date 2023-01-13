@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run lint && node server.js",
-    "dev": "npm run lint && nodemon server.js",
+    "dev": "npm run lint & nodemon server.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
@@ -15,7 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.45.0",
-    "eslint": "^8.30.0",
+    "eslint": "^8.31.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-import": "^2.26.0",

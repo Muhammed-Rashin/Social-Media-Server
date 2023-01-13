@@ -8,6 +8,7 @@ const postModel = new mongoose.Schema(
     caption: String,
     location: String,
     status: String,
+    likes: Array,
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: userModel,
