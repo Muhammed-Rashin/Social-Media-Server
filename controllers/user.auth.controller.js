@@ -19,12 +19,10 @@ module.exports = {
       });
       res.cookie('Accesstoken', token, {
         sameSite: 'Strict',
-        expires: new Date('01 12 2023'),
-        secure: true,
         path: '/',
-        httpOnly: true,
+        maxAge: 2 * 60 * 60 * 5000,
       });
-      res.json({ isAuth: true });
+      if (data) res.json({ isAuth: true, id: data._id });
     } else {
       console.log('Signup failed');
     }
@@ -40,19 +38,18 @@ module.exports = {
         _id: data._id,
       };
       const token = jwt.sign(data, process.env.JWT_SECRET_KEY, {
-        expiresIn: 60 * 60 * 60 * 24,
+        expiresIn: 60 * 10,
       });
+
       res.cookie('Accesstoken', token, {
         sameSite: 'Strict',
-        expires: false,
-        secure: true,
         path: '/',
-        httpOnly: true,
+        maxAge: 2 * 60 * 60 * 5000,
       });
     } else {
       console.log('Password incorrect');
     }
-    res.json({ status: data });
+    if (data) res.json({ status: true, id: data._id });
   },
   createPost: (req, res) => {
     cloudinary(req.body.image)
@@ -203,5 +200,24 @@ module.exports = {
   doUnfollow: async (req, res) => {
     const result = await userHelper.doUnfollow(req.body.id, req.userData._id);
     result ? res.send(true) : res.send(false);
+  },
+  getAllUsers: async (req, res) => {
+    const result = await userHelper.getAllUsers(req.userData._id);
+    res.send(result);
+  },
+  sentMassage: async (req, res) => {
+    const result = await userHelper.sentMassage({
+      from: req.userData._id,
+      ...req.body,
+    });
+    result ? res.send(true) : res.send(false);
+  },
+  getMessages: async (req, res) => {
+    const result = await userHelper.getMessages(
+      req.userData._id,
+      req.body.recieverId,
+    );
+
+    result ? res.send(result) : res.send(false);
   },
 };

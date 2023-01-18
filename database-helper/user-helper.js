@@ -1,3 +1,5 @@
+/* eslint-disable arrow-body-style */
+/* eslint-disable no-return-await */
 /* eslint-disable prefer-template */
 /* eslint-disable no-else-return */
 /* eslint-disable no-useless-catch */
@@ -9,6 +11,7 @@ const bcrypt = require('bcrypt');
 const userModel = require('../models/user-model');
 const postModel = require('../models/post-model');
 const commentModel = require('../models/comment-model');
+const messageModel = require('../models/message-model');
 
 module.exports = {
   doSignup: async (data) => {
@@ -31,6 +34,14 @@ module.exports = {
       } else console.log('User not found');
     } catch (err) {
       console.log(err);
+    }
+  },
+  getUser: async (id) => {
+    try {
+      const data = await userModel.findOne({ _id: id }, { password: 0 });
+      return data;
+    } catch (error) {
+      console.log(error);
     }
   },
   createPost: async (postData) => {
@@ -191,5 +202,21 @@ module.exports = {
         },
       },
     );
+  },
+  getAllUsers: async (id) => await userModel.find({ _id: { $ne: id } }),
+
+  sentMassage: async (data) => {
+    const messageSchema = new messageModel(data);
+    return await messageSchema.save();
+  },
+  getMessages: async (senterId, recieverId) => {
+    const messages = await messageModel.find({
+      $or: [
+        { $and: [{ from: senterId }, { to: recieverId }] },
+        { $and: [{ from: recieverId }, { to: senterId }] },
+      ],
+    });
+
+    return messages;
   },
 };
