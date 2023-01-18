@@ -2,18 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const verifyAuth = require('./middlewares/verifyAuth');
-
-// eslint-disable-next-line no-unused-vars
-const mongoose = require('./config/database.config');
 const io = require('socket.io')(7000, {
   cors: {
     origin: 'http://localhost:3000',
   },
 });
+const verifyAuth = require('./middlewares/verifyAuth');
+
+// eslint-disable-next-line no-unused-vars
+const mongoose = require('./config/database.config');
 
 const corsConfig = {
-  origin: true,
+  origin: 'http://localhost:3000',
   credentials: true,
 };
 

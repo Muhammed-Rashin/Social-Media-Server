@@ -5,8 +5,9 @@ const jwt = require('jsonwebtoken');
 
 // Middleware for verify user athorization
 const verifyUser = (req, res, next) => {
-  if (req.cookies.Accesstoken) {
-    const token = req.cookies.Accesstoken;
+  console.log(req.headers.token);
+  if (req.headers.token) {
+    const token = req.headers.token;
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
       if (err) {
         res.json({ error: err.message });

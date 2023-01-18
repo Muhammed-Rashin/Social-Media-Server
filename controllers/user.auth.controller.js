@@ -15,20 +15,17 @@ module.exports = {
         _id: data._id,
       };
       const token = jwt.sign(data, process.env.JWT_SECRET_KEY, {
-        expiresIn: 60 * 10,
+        expiresIn: 86400,
       });
-      res.cookie('Accesstoken', token, {
-        sameSite: 'Strict',
-        path: '/',
-        maxAge: 2 * 60 * 60 * 5000,
-      });
-      if (data) res.json({ isAuth: true, id: data._id });
+
+      res.json({ Accesstoken: token, id: data._id });
     } else {
       console.log('Signup failed');
     }
   },
 
   doLogin: async (req, res) => {
+    console.log(req.body);
     let data = await userHelper.doLogin(req.body);
 
     if (data) {
@@ -38,18 +35,12 @@ module.exports = {
         _id: data._id,
       };
       const token = jwt.sign(data, process.env.JWT_SECRET_KEY, {
-        expiresIn: 60 * 10,
+        expiresIn: 86400,
       });
-
-      res.cookie('Accesstoken', token, {
-        sameSite: 'Strict',
-        path: '/',
-        maxAge: 2 * 60 * 60 * 5000,
-      });
+      res.json({ Accesstoken: token, id: data._id });
     } else {
       console.log('Password incorrect');
     }
-    if (data) res.json({ status: true, id: data._id });
   },
   createPost: (req, res) => {
     cloudinary(req.body.image)
