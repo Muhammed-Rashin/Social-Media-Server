@@ -245,10 +245,35 @@ module.exports = {
 
     return messages;
   },
-  getFollowers: async (id) => {
+  getFollowers: async (id, callback) => {
     const result = await userModel.findOne({ _id: id });
+    let followers = [];
+    if (result._doc.followers.length === 0) {
+      callback([]);
+    } else {
+      result._doc.followers.forEach(async (element, index) => {
+        let follower = await userModel.findOne({ _id: element.userId });
 
-    console.log(result);
+        if (follower) {
+          if (follower.followers) {
+            follower.followers.forEach((item, i) => {
+              if (item.userId === id) {
+                follower = {
+                  ...follower._doc,
+                  followed: true,
+                };
+              }
+            });
+          }
+          followers.push(follower);
+        }
+
+        if (index + 1 == result.followers.length) {
+          console.log(2);
+          callback(followers);
+        }
+      });
+    }
     // return details;
   },
 };

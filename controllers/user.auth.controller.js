@@ -262,10 +262,19 @@ module.exports = {
     result ? res.send(result) : res.send(false);
   },
   getFollowers: async (req, res) => {
-    console.log(req.userData._id);
-    const result = await userHelper.getFollowers(req.userData._id);
-
-    console.log(result);
-    if (result) res.send(result);
+    console.log(req.body.id);
+    if (req.body.id) {
+      await userHelper.getFollowers(req.body.id, (followers) => {
+        console.log('Yes its here', followers);
+        res.send(followers);
+      });
+    } else {
+      await userHelper.getFollowers(req.userData._id, (followers) => {
+        res.send(followers);
+      });
+    }
+  },
+  getFollowing: async (req, res) => {
+    
   },
 };

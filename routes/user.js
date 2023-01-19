@@ -63,6 +63,8 @@ router.post('/sentMassage', verifyAuth, controller.sentMassage);
 
 router.post('/getMessages', verifyAuth, controller.getMessages);
 
-router.get('/getFollowers', verifyAuth, controller.getFollowers);
+router.post('/getFollowers', verifyAuth, controller.getFollowers);
+
+router.post('/getFollowing', verifyAuth, controller.getFollowing);
 
 module.exports = router;
