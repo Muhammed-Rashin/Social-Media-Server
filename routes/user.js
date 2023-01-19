@@ -10,7 +10,15 @@ router.get('/', verifyAuth, () => {});
 
 router.post('/signup', controller.doSignup);
 
+router.post('/verifyEmail', controller.verifyEmail);
+
+router.post('/resendEmail', controller.resendEmail);
+
 router.post('/login', controller.doLogin);
+
+router.post('/forgetPasswordConfirmation', controller.forgetPassword);
+
+router.post('/changePassword', controller.changePassword);
 
 router.get('/getUser', verifyAuth, async (req, res) => {
   const result = await userHelper.getUser(req.userData._id);
@@ -54,5 +62,7 @@ router.get('/getAllUsers', verifyAuth, controller.getAllUsers);
 router.post('/sentMassage', verifyAuth, controller.sentMassage);
 
 router.post('/getMessages', verifyAuth, controller.getMessages);
+
+router.get('/getFollowers', verifyAuth, controller.getFollowers);
 
 module.exports = router;

@@ -4,31 +4,69 @@
 const jwt = require('jsonwebtoken');
 const cloudinary = require('../config/cloudinary');
 const userHelper = require('../database-helper/user-helper');
+const sentVerifyEmail = require('../utils/confirmEmail');
 
 module.exports = {
   doSignup: async (req, res) => {
-    let data = await userHelper.doSignup(req.body);
-    if (data) {
-      data = {
-        email: data.email,
-        username: data.username,
-        _id: data._id,
-      };
-      const token = jwt.sign(data, process.env.JWT_SECRET_KEY, {
-        expiresIn: 86400,
-      });
+    const data = await userHelper.doSignup(req.body);
 
-      res.json({ Accesstoken: token, id: data._id });
+    if (data === 'emailExist') res.send('emailExist');
+    else if (data === 'usernameExist') res.send('usernameExist');
+    else if (data) {
+      sentVerifyEmail(req.body);
+      res.json({ status: true });
     } else {
       console.log('Signup failed');
     }
   },
 
+  verifyEmail: (req, res) => {
+    if (req.body.forgetToken) {
+      const token = req.body.forgetToken;
+      jwt.verify(
+        token,
+        process.env.JWT_EMAIL_VERIFICATION,
+        async (err, decoded) => {
+          if (err) {
+            res.send(false);
+          } else {
+            res.send(decoded.email);
+          }
+        },
+      );
+    } else if (req.body.token) {
+      const token = req.body.token;
+      jwt.verify(
+        token,
+        process.env.JWT_EMAIL_VERIFICATION,
+        async (err, decoded) => {
+          if (err) {
+            console.log(err);
+            res.send(false);
+          } else {
+            if (await userHelper.verifyEmail(decoded.email)) {
+              res.send(true);
+            }
+          }
+        },
+      );
+    }
+  },
+
+  resendEmail: async (req, res) => {
+    const data = await userHelper.resendEmail(req.body.email);
+    if (data) {
+      sentVerifyEmail(data);
+      res.send(true);
+    } else res.send(false);
+  },
+
   doLogin: async (req, res) => {
-    console.log(req.body);
     let data = await userHelper.doLogin(req.body);
 
-    if (data) {
+    if (data === 'notConfirmed') {
+      res.send('notConfirmed');
+    } else if (data) {
       data = {
         email: data.email,
         username: data.username,
@@ -38,9 +76,21 @@ module.exports = {
         expiresIn: 86400,
       });
       res.json({ Accesstoken: token, id: data._id });
-    } else {
-      console.log('Password incorrect');
-    }
+    } else res.send(false);
+  },
+
+  forgetPassword: async (req, res) => {
+    const result = await userHelper.forgetPassword(req.body.email);
+    if (result) {
+      sentVerifyEmail(result, 'forgetPassword');
+      res.send(true);
+    } else res.send('emailNotExist');
+  },
+  changePassword: async (req, res) => {
+    const result = await userHelper.changePassword(req.body);
+    if (result) {
+      res.send(true);
+    } else res.send(false);
   },
   createPost: (req, res) => {
     cloudinary(req.body.image)
@@ -210,5 +260,12 @@ module.exports = {
     );
 
     result ? res.send(result) : res.send(false);
+  },
+  getFollowers: async (req, res) => {
+    console.log(req.userData._id);
+    const result = await userHelper.getFollowers(req.userData._id);
+
+    console.log(result);
+    if (result) res.send(result);
   },
 };

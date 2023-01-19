@@ -12,6 +12,7 @@ const userModel = new mongoose.Schema(
     firstName: String,
     lastName: String,
     followers: Array,
+    status: Boolean,
     // followers: [
     //   {
     //     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },

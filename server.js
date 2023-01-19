@@ -37,7 +37,7 @@ const authorizationRoute = require('./routes/authorization');
 app.use('/', indexRoute);
 app.use('/isAuthorized', verifyAuth, authorizationRoute);
 
-//Socket Configuration
+// Socket Configuration
 
 let activeUsers = [];
 

@@ -16,6 +16,10 @@ const messageModel = require('../models/message-model');
 module.exports = {
   doSignup: async (data) => {
     try {
+      if (await userModel.findOne({ email: data.email })) return 'emailExist';
+      if (await userModel.findOne({ username: data.username }))
+        return 'usernameExist';
+
       data.password = await bcrypt.hash(data.password, 10);
       const userSchema = new userModel(({ username, email, password } = data));
       return await userSchema.save();
@@ -24,17 +28,39 @@ module.exports = {
       return null;
     }
   },
+  verifyEmail: async (email) => {
+    return await userModel.updateOne({ email: email }, { status: true });
+  },
+
+  resendEmail: async (email) => {
+    return await userModel.findOne({ email: email });
+  },
 
   doLogin: async (data) => {
     try {
       const userData = await userModel.findOne({ email: data.email });
       if (userData) {
         const match = await bcrypt.compare(data.password, userData.password);
-        if (match) return userData;
-      } else console.log('User not found');
+        if (match) {
+          if (userData.status) {
+            return userData;
+          } else return 'notConfirmed';
+        } else return false;
+      } else return false;
     } catch (err) {
       console.log(err);
     }
+  },
+
+  forgetPassword: async (email) => {
+    return await userModel.findOne({ email: email });
+  },
+  changePassword: async ({ email, password }) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return await userModel.updateOne(
+      { email: email },
+      { password: hashedPassword },
+    );
   },
   getUser: async (id) => {
     try {
@@ -218,5 +244,11 @@ module.exports = {
     });
 
     return messages;
+  },
+  getFollowers: async (id) => {
+    const result = await userModel.findOne({ _id: id });
+
+    console.log(result);
+    // return details;
   },
 };
