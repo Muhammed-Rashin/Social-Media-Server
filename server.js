@@ -4,7 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const io = require('socket.io')(7000, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'https://polite-pie-664ba6.netlify.app',
   },
 });
 const verifyAuth = require('./middlewares/verifyAuth');
@@ -13,7 +13,7 @@ const verifyAuth = require('./middlewares/verifyAuth');
 const mongoose = require('./config/database.config');
 
 const corsConfig = {
-  origin: 'http://localhost:3000',
+  origin: 'https://polite-pie-664ba6.netlify.app',
   credentials: true,
 };
 

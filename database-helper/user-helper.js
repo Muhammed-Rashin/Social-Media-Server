@@ -29,11 +29,19 @@ module.exports = {
     }
   },
   verifyEmail: async (email) => {
-    return await userModel.updateOne({ email: email }, { status: true });
+    try {
+      return await userModel.updateOne({ email: email }, { status: true });
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   resendEmail: async (email) => {
-    return await userModel.findOne({ email: email });
+    try {
+      return await userModel.findOne({ email: email });
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   doLogin: async (data) => {
@@ -53,14 +61,22 @@ module.exports = {
   },
 
   forgetPassword: async (email) => {
-    return await userModel.findOne({ email: email });
+    try {
+      return await userModel.findOne({ email: email });
+    } catch (error) {
+      console.log(error);
+    }
   },
   changePassword: async ({ email, password }) => {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return await userModel.updateOne(
-      { email: email },
-      { password: hashedPassword },
-    );
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      return await userModel.updateOne(
+        { email: email },
+        { password: hashedPassword },
+      );
+    } catch (error) {
+      console.log(error);
+    }
   },
   getUser: async (id) => {
     try {
@@ -86,194 +102,270 @@ module.exports = {
     }
   },
   deletePost: async ({ id }) => {
-    await postModel.deleteOne({ _id: id });
+    try {
+      await postModel.deleteOne({ _id: id });
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   doLike: async (id, userId) => {
-    const like = {
-      date: Date.now(),
-      userId,
-    };
-    const result = await postModel.updateOne(
-      { _id: id },
-      { $push: { likes: like } },
-    );
-    return result;
+    try {
+      const like = {
+        date: Date.now(),
+        userId,
+      };
+      const result = await postModel.updateOne(
+        { _id: id },
+        { $push: { likes: like } },
+      );
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   doDisLIke: async (id, userId) => {
-    await postModel.updateOne(
-      { _id: id },
-      {
-        $pull: {
-          likes: { userId },
+    try {
+      await postModel.updateOne(
+        { _id: id },
+        {
+          $pull: {
+            likes: { userId },
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      console.log(error);
+    }
   },
   doComment: async (data) => {
-    const commentSchema = new commentModel(data);
-    const result = await commentSchema.save();
-    return result;
+    try {
+      const commentSchema = new commentModel(data);
+      const result = await commentSchema.save();
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
   },
   getComments: async (id) => {
-    const result = await commentModel
-      .find({ postId: id })
-      .populate('userId')
-      .populate('replys.userId');
-    return result;
+    try {
+      const result = await commentModel
+        .find({ postId: id })
+        .populate('userId')
+        .populate('replys.userId');
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
   },
   likeComment: async (id, userId) => {
-    const like = {
-      date: Date.now(),
-      userId,
-    };
-    const result = await commentModel.updateOne(
-      { _id: id },
-      { $push: { likes: like } },
-    );
-    return result;
+    try {
+      const like = {
+        date: Date.now(),
+        userId,
+      };
+      const result = await commentModel.updateOne(
+        { _id: id },
+        { $push: { likes: like } },
+      );
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
   },
   disLikeComment: async (id, userId) => {
-    await commentModel.updateOne(
-      { _id: id },
-      {
-        $pull: {
-          likes: { userId },
+    try {
+      await commentModel.updateOne(
+        { _id: id },
+        {
+          $pull: {
+            likes: { userId },
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      console.log(error);
+    }
   },
   replyComment: async ({ commentId, comment, userId }) => {
-    const data = {
-      comment,
-      userId,
-      date: Date.now(),
-    };
-    const result = await commentModel.updateOne(
-      { _id: commentId },
-      { $push: { replys: data } },
-    );
-    return result;
+    try {
+      const data = {
+        comment,
+        userId,
+        date: Date.now(),
+      };
+      const result = await commentModel.updateOne(
+        { _id: commentId },
+        { $push: { replys: data } },
+      );
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
   },
   getUserProfile: async (id) => {
-    const user = await userModel.findOne({ _id: id });
-    const posts = await postModel.find({ userId: id });
-    return { user: { ...user._doc }, posts };
+    try {
+      const user = await userModel.findOne({ _id: id });
+      const posts = await postModel.find({ userId: id });
+      return { user, posts };
+    } catch (error) {
+      console.log(error);
+    }
   },
   editUserProfile: async (editData, id) => {
-    if (editData.username === '') {
-      await userModel.updateOne(
-        { _id: id },
-        {
-          bio: editData.bio,
-          firstName: editData.firstName,
-          lastName: editData.lastName,
-        },
-      );
-      const result = await userModel.findOne({ _id: id });
-      return result;
-    } else {
-      const isExist = await userModel.findOne({ username: editData.username });
-
-      if (isExist) return 'exist';
-
-      await userModel.updateOne(
-        { _id: id },
-        {
+    try {
+      if (editData.username === '') {
+        await userModel.updateOne(
+          { _id: id },
+          {
+            bio: editData.bio,
+            firstName: editData.firstName,
+            lastName: editData.lastName,
+          },
+        );
+        const result = await userModel.findOne({ _id: id });
+        return result;
+      } else {
+        const isExist = await userModel.findOne({
           username: editData.username,
-          bio: editData.bio,
-          firstName: editData.firstName,
-          lastName: editData.lastName,
-        },
-      );
-      const result = await userModel.findOne({ _id: id });
+        });
 
-      return result;
+        if (isExist) return 'exist';
+
+        await userModel.updateOne(
+          { _id: id },
+          {
+            username: editData.username,
+            bio: editData.bio,
+            firstName: editData.firstName,
+            lastName: editData.lastName,
+          },
+        );
+        const result = await userModel.findOne({ _id: id });
+
+        return result;
+      }
+    } catch (error) {
+      console.log(error);
     }
   },
   updateProfileImage: async (url, id) => {
-    await userModel.updateOne({ _id: id }, { profileImg: url });
-    const result = userModel.findOne({ _id: id });
-    return result;
+    try {
+      await userModel.updateOne({ _id: id }, { profileImg: url });
+      const result = userModel.findOne({ _id: id });
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
   },
   searchUsers: async (search, id) => {
-    const result = userModel
-      .find({
-        $and: [
-          { _id: { $ne: id } },
-          { username: { $regex: new RegExp('^' + search + '.*', 'i') } },
-        ],
-      })
-      .exec();
+    try {
+      const result = userModel
+        .find({
+          $and: [
+            { _id: { $ne: id } },
+            { username: { $regex: new RegExp('^' + search + '.*', 'i') } },
+          ],
+        })
+        .exec();
 
-    return result;
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
   },
   doFollow: async (id, userId) => {
-    const data = {
-      userId,
-      date: Date.now(),
-    };
-    const result = await userModel.updateOne(
-      { _id: id },
-      { $push: { followers: data } },
-    );
+    try {
+      const data = {
+        userId,
+        date: Date.now(),
+      };
+      const result = await userModel.updateOne(
+        { _id: id },
+        { $push: { followers: data } },
+      );
+    } catch (error) {
+      console.log(error);
+    }
   },
   doUnfollow: async (id, userId) => {
-    await userModel.updateOne(
-      { _id: id },
-      {
-        $pull: {
-          followers: { userId },
+    try {
+      await userModel.updateOne(
+        { _id: id },
+        {
+          $pull: {
+            followers: { userId },
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      console.log(error);
+    }
   },
-  getAllUsers: async (id) => await userModel.find({ _id: { $ne: id } }),
+  getAllUsers: async (id) => {
+    try {
+      return await userModel.find({ _id: { $ne: id } });
+    } catch (error) {
+      console.log(error);
+    }
+  },
 
   sentMassage: async (data) => {
-    const messageSchema = new messageModel(data);
-    return await messageSchema.save();
+    try {
+      const messageSchema = new messageModel(data);
+      return await messageSchema.save();
+    } catch (error) {
+      console.log(error);
+    }
   },
   getMessages: async (senterId, recieverId) => {
-    const messages = await messageModel.find({
-      $or: [
-        { $and: [{ from: senterId }, { to: recieverId }] },
-        { $and: [{ from: recieverId }, { to: senterId }] },
-      ],
-    });
+    try {
+      const messages = await messageModel.find({
+        $or: [
+          { $and: [{ from: senterId }, { to: recieverId }] },
+          { $and: [{ from: recieverId }, { to: senterId }] },
+        ],
+      });
 
-    return messages;
+      return messages;
+    } catch (error) {
+      console.log(error);
+    }
   },
   getFollowers: async (id, callback) => {
-    const result = await userModel.findOne({ _id: id });
-    let followers = [];
-    if (result._doc.followers.length === 0) {
-      callback([]);
-    } else {
-      result._doc.followers.forEach(async (element, index) => {
-        let follower = await userModel.findOne({ _id: element.userId });
+    try {
+      const result = await userModel.findOne({ _id: id });
+      let followers = [];
+      if (result._doc.followers.length === 0) {
+        callback([]);
+      } else {
+        result._doc.followers.forEach(async (element, index) => {
+          let follower = await userModel.findOne({ _id: element.userId });
 
-        if (follower) {
-          if (follower.followers) {
-            follower.followers.forEach((item, i) => {
-              if (item.userId === id) {
-                follower = {
-                  ...follower._doc,
-                  followed: true,
-                };
-              }
-            });
+          if (follower) {
+            if (follower.followers) {
+              follower.followers.forEach((item, i) => {
+                if (item.userId === id) {
+                  follower = {
+                    ...follower._doc,
+                    followed: true,
+                  };
+                }
+              });
+            }
+            followers.push(follower);
           }
-          followers.push(follower);
-        }
 
-        if (index + 1 == result.followers.length) {
-          console.log(2);
-          callback(followers);
-        }
-      });
+          if (index + 1 == result.followers.length) {
+            console.log(2);
+            callback(followers);
+          }
+        });
+      }
+      // return details;
+    } catch (error) {
+      console.log(error);
     }
-    // return details;
   },
 };
