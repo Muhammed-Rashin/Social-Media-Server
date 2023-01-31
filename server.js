@@ -4,16 +4,17 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const io = require('socket.io')(7000, {
   cors: {
-    origin: 'https://polite-pie-664ba6.netlify.app',
+    origin: process.env.CLOUDINARY_API_SECRET,
   },
 });
+
 const verifyAuth = require('./middlewares/verifyAuth');
 
 // eslint-disable-next-line no-unused-vars
 const mongoose = require('./config/database.config');
 
 const corsConfig = {
-  origin: 'https://polite-pie-664ba6.netlify.app',
+  origin: process.env.SITE_URL,
   credentials: true,
 };
 

@@ -32,7 +32,7 @@ const sentVerifyEmail = ({ email, username }, type) => {
       text: `Hi! ${username}, You have recently visited 
       our website and entered your email.
       Please follow the given link to verify your email
-      http://localhost:3000/verifyForgetPassword/?token=${token}
+      ${process.env.SITE_URL}/verifyForgetPassword/?token=${token}
       This Link only valid for 10 Minuts
       Thanks`,
     };
@@ -50,7 +50,7 @@ const sentVerifyEmail = ({ email, username }, type) => {
       text: `Hi! ${username}, You have recently visited 
       our website and entered your email.
       Please follow the given link to verify your email
-      http://localhost:3000/verifyEmail/?token=${token}
+      ${process.env.SITE_URL}/verifyEmail/?token=${token}
       This Link only valid for 10 Minuts
       Thanks`,
     };
