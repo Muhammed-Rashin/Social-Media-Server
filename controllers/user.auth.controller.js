@@ -7,6 +7,9 @@ const userHelper = require('../database-helper/user-helper');
 const sentVerifyEmail = require('../utils/confirmEmail');
 
 module.exports = {
+  test: (req, res) => {
+    res.send('Server Is Running');
+  },
   doSignup: async (req, res) => {
     try {
       const data = await userHelper.doSignup(req.body);
