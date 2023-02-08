@@ -12,6 +12,7 @@ const userModel = require('../models/user-model');
 const postModel = require('../models/post-model');
 const commentModel = require('../models/comment-model');
 const messageModel = require('../models/message-model');
+const { default: mongoose } = require('mongoose');
 
 module.exports = {
   doSignup: async (data) => {
@@ -208,7 +209,14 @@ module.exports = {
     try {
       const user = await userModel.findOne({ _id: id });
       const posts = await postModel.find({ userId: id });
-      return { user, posts };
+      const following = await userModel.aggregate([
+        {
+          $match: {
+            followers: { $elemMatch: { userId: id } },
+          },
+        },
+      ]);
+      return { user, posts, following };
     } catch (error) {
       console.log(error);
     }
@@ -364,6 +372,19 @@ module.exports = {
         });
       }
       // return details;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getFollowing: async (id) => {
+    try {
+      return await userModel.aggregate([
+        {
+          $match: {
+            followers: { $elemMatch: { userId: id } },
+          },
+        },
+      ]);
     } catch (error) {
       console.log(error);
     }

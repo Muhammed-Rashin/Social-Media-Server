@@ -268,7 +268,11 @@ module.exports = {
         result = await userHelper.getUserProfile(req.userData._id);
       }
       result
-        ? res.json({ user: result.user, posts: result.posts })
+        ? res.json({
+            user: result.user,
+            posts: result.posts,
+            following: result.following.length,
+          })
         : res.send(false);
     } catch (error) {
       console.log(error);
@@ -389,5 +393,17 @@ module.exports = {
       console.log(error);
     }
   },
-  getFollowing: async (req, res) => {},
+  getFollowing: async (req, res) => {
+    try {
+      let data;
+      if (req.body.id) {
+        data = await userHelper.getFollowing(req.body.id);
+      } else {
+        data = await userHelper.getFollowing(req.userData._id);
+      }
+      res.send(data);
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
